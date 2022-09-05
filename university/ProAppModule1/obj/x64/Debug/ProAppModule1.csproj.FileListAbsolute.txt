@@ -1,0 +1,9 @@
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\bin\Debug\ProAppModule1.dll
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\bin\Debug\ProAppModule1.pdb
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.csproj.AssemblyReference.cache
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.dll
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.pdb
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.AHPForm.resources
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\obj\x64\Debug\ProAppModule1.csproj.GenerateResource.cache
+C:\Users\Administrator\source\repos\ProAppModule1\ProAppModule1\bin\Debug\Calculator.pyt
