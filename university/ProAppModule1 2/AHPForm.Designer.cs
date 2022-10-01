@@ -59,8 +59,8 @@ namespace ProAppModule1
             this.combo2 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBoxInput = new System.Windows.Forms.TextBox();
-            this.textBoxInput2 = new System.Windows.Forms.TextBox();
+            this.ComboBoxInput = new System.Windows.Forms.ComboBox();
+            this.ComboBoxInput2 = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -298,14 +298,15 @@ namespace ProAppModule1
             // 
             // textBoxPath1Input
             // 
-            this.textBoxInput.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.textBoxInput.Location = new System.Drawing.Point(976, 412);
-            this.textBoxInput.Multiline = true;
-            this.textBoxInput.Name = "Path1_input";
-            this.textBoxInput.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxInput.Size = new System.Drawing.Size(347, 25);
-            this.textBoxInput.TabIndex = 23;
-            this.textBoxInput.TextChanged += new System.EventHandler(this.textBoxInput_TextChanged);
+            this.ComboBoxInput.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.ComboBoxInput.Location = new System.Drawing.Point(976, 412);
+            this.ComboBoxInput.Name = "Path1_choose";
+            this.ComboBoxInput.Size = new System.Drawing.Size(347, 25);
+            this.ComboBoxInput.TabIndex = 23;
+            this.ComboBoxInput.Text = "None";
+            this.ComboboxInputRange();
+            //this.ComboBoxInput.Items.AddRange();
+            this.ComboBoxInput.DropDown += new System.EventHandler(this.ComboBoxInput_TextChanged);
             // TablePath1Label1
             // 
             this.TablePath1Label1.AutoSize = true;
@@ -315,17 +316,17 @@ namespace ProAppModule1
             this.TablePath1Label1.Name = "TablePath1Label1";
             this.TablePath1Label1.Size = new System.Drawing.Size(97, 15);
             this.TablePath1Label1.TabIndex = 1;
-            this.TablePath1Label1.Text = "Table Criteria Path";
+            this.TablePath1Label1.Text = "Table Criteria choose";
             // textBoxPat21Input
             // 
-            this.textBoxInput2.BackColor = System.Drawing.SystemColors.ControlLight;
-            this.textBoxInput2.Location = new System.Drawing.Point(976, 472);
-            this.textBoxInput2.Multiline = true;
-            this.textBoxInput2.Name = "Path2_input";
-            this.textBoxInput2.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBoxInput2.Size = new System.Drawing.Size(347, 25);
-            this.textBoxInput2.TabIndex = 23;
-            this.textBoxInput2.TextChanged += new System.EventHandler(this.textBoxInput_2_TextChanged);
+            this.ComboBoxInput2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.ComboBoxInput2.Location = new System.Drawing.Point(976, 472);
+            this.ComboBoxInput2.Name = "Path2_input";
+            this.ComboBoxInput2.Size = new System.Drawing.Size(347, 25);
+            this.ComboBoxInput2.TabIndex = 23;
+            this.ComboBoxInput2.Text = "None";
+            //this.ComboBoxInput2.Items.AddRange(this.ComboboxInputRange());
+            this.ComboBoxInput2.DropDown += new System.EventHandler(this.ComboBoxInput_2_TextChanged);
             // TablePath1Label2
             // 
             this.TablePath1Label2.AutoSize = true;
@@ -335,15 +336,15 @@ namespace ProAppModule1
             this.TablePath1Label2.Name = "TablePath1Label2";
             this.TablePath1Label2.Size = new System.Drawing.Size(97, 15);
             this.TablePath1Label2.TabIndex = 1;
-            this.TablePath1Label2.Text = "Table Coordinate Path";
+            this.TablePath1Label2.Text = "Table Coordinate choose";
             // 
             // AHPForm
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(1436, 517);
-            this.Controls.Add(this.textBoxInput);
-            this.Controls.Add(this.textBoxInput2);
+            this.Controls.Add(this.ComboBoxInput);
+            this.Controls.Add(this.ComboBoxInput2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Cal);
@@ -377,7 +378,7 @@ namespace ProAppModule1
         }
 
         #endregion
- 
+
         private System.Windows.Forms.Label AvailableRasters;
         private System.Windows.Forms.Label SelectedCriteria;
         private System.Windows.Forms.Label TablePath1Label1;
@@ -395,8 +396,8 @@ namespace ProAppModule1
         private System.Windows.Forms.Label ratingMatrix;
         private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.TextBox textBoxInput;
-        private System.Windows.Forms.TextBox textBoxInput2;
+        private System.Windows.Forms.ComboBox ComboBoxInput;
+        private System.Windows.Forms.ComboBox ComboBoxInput2;
         private System.Windows.Forms.Button Enter;
         public System.Windows.Forms.Button AddToRight;
         private System.Windows.Forms.Button AddMulti;

@@ -1,4 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
+from datetime import datetime
+
+
+import datetime
 import re
 import math
 import os
@@ -84,32 +88,24 @@ class Tool(object):
             plt.plot(X, Y)
         plt.show()
 
-    def format_df(self, df):
-        columns = df.columns
-        df['cci'] = round(df['cci'])
-        text = ' '.join([column for column in columns]) + '\n'
-        for index, row in df.iterrows():
-            text += ' '.join([str(row[column]) for column in columns]) + '\n'
-        return text
-
     def execute(self, parameters, messages):
         """The source code of the tool."""
         names_ = parameters[0].valueAsText.split(',')
-        table_path = parameters[1].valueAsText
-        shp_path = parameters[2].valueAsText
+        site_data_gdbtable_name = parameters[1].valueAsText
+        coordinates_gdbtable_name = parameters[2].valueAsText
         df_criteria_raw = parameters[3].valueAsText.strip()
+
+        aprx = arcpy.mp.ArcGISProject("CURRENT")
+        defdb_path = aprx.defaultGeodatabase
+
         df_criteria = convert_str_csv(df_criteria_raw, names_)
-        site_data = site_data_load(table_path)
+        site_data = site_data_load(defdb_path, site_data_gdbtable_name)
         obj = Calculations(names_, df_criteria)
         distance_fnis, values_for_plot = obj.run(site_data)
-        new_shp_path = add_calculated_data_to_layer(shp_path, distance_fnis)   
+        new_shp_path = add_calculated_data_to_layer(defdb_path, coordinates_gdbtable_name, distance_fnis)   
         connect_shp_file_to_map(new_shp_path)
-        distance_fnis_formatted = self.format_df(distance_fnis)
-        arcpy.AddMessage(distance_fnis_formatted)
+        arcpy.AddMessage(distance_fnis)
         self.plot_chart(values_for_plot)
-        #arcpy.AddMessage('x:'+str(values_for_plot['x'])) Flat to list
-        #arcpy.AddMessage('y:'+str(values_for_plot['y']))Flat to list
-        #arcpy.AddMessage(f"{names_}: {table_path}: {df_criteria_raw}")
 
 
 class Calculations:
@@ -560,16 +556,21 @@ class Calculations:
                 values_for_graph)
 
 
-def site_data_load(table_path: str) -> pd.DataFrame:
+def geodb_table_load(table_path: str, fields='*'):
+    data = []
+    with arcpy.da.SearchCursor(table_path, fields) as cursor:
+        for row in cursor:
+            data.append(row)
+    return data
+
+def site_data_load(defdb_path: str, site_data_table_name: str) -> pd.DataFrame:
     columns = ['id',
         'Site reference', 'Previous Land use', 'Site size numeric',
         'Site size', 'Geographic location', 'Access', 'Infrastructure',
         'Infrastructure_describe', 'Water risk', 'coordinates'
     ]
-    data = []
-    with arcpy.da.SearchCursor(table_path, '*') as cursor:
-        for row in cursor:
-            data.append(row)
+    table_path = os.path.join(defdb_path, site_data_table_name)
+    data = geodb_table_load(table_path)
     return pd.DataFrame(data, columns=columns)
 
 
@@ -593,22 +594,21 @@ def connect_shp_file_to_map(shp_path: str):
         arcpy.AddMessage(e)
 
     
+def create_new_table_file_name(folder: str, current_name: str):
+    # file_name = current_name.rsplit('.', 1)[0]
+    new_file_name = current_name+'_result' +'_'.join(str(datetime.datetime.now().timestamp()).split('.'))
+    new_file_name = new_file_name + '.shp'
+    # folder_parent = folder.rsplit('\\', 1)[0]
+    return os.path.join(folder, new_file_name)
+      
+      
+def add_calculated_data_to_layer(defdb_path: str, coordinates_gdbtable_name: str, distance_fnis: pd.DataFrame):
 
-def create_new_shp_file_name(folder: str, current_name: str):
-    file_name = current_name.rsplit('.', 1)[0]
-    new_file_name = file_name+'_result'
-    ii = 0
-    while ii < 10**5:
-        ii += 1
-        if not new_file_name + f'_{ii}.shp' in os.listdir(folder):
-            return folder + '\\' + new_file_name + f'_{ii}' + '.shp'
-      
-      
-def add_calculated_data_to_layer(shp_path: str, distance_fnis: pd.DataFrame):
-    #shp_path = 'C:\\Users\\Administrator\\Desktop\\BRIC Index data_Charf\\BRIC Index data_Charf.shp'
-    df = gpd.read_file(str(shp_path))
+    df = gpd.read_file(defdb_path, driver='FileGDB', layer=coordinates_gdbtable_name)
     new_df = df.merge(distance_fnis, left_on='Site_refer', right_on='Site_refer')
-    new_shp_path = create_new_shp_file_name(*shp_path.rsplit('\\', 1))
+    specific_timestamp = '_'.join(str(datetime.datetime.now().timestamp()).split('.'))
+    file_name = f'result_{specific_timestamp}'
+    new_shp_path = f'C:\\Users\\Administrator\\Desktop\\BRIC Index data_Charf\\{file_name}.shp'
     new_df.to_file(new_shp_path)
-    return new_shp_path
-
+    arcpy.FeatureClassToGeodatabase_conversion(new_shp_path, defdb_path)
+    return os.path.join(defdb_path, file_name)

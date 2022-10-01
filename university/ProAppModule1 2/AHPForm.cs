@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ArcGIS.Desktop.Core.Geoprocessing;
 using System.IO;
+using ArcGIS.Core.Data;
+using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
 
 
 namespace ProAppModule1
@@ -23,7 +26,7 @@ namespace ProAppModule1
             InitializeComponent();
             this.AutoSize = true;
             this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-        }
+    }
 
         private void AHPForm_Load(object sender, EventArgs e)
         {
@@ -169,7 +172,7 @@ namespace ProAppModule1
         private void dataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
 
-            var ref_list = new List<string> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9", 
+            var ref_list = new List<string> { "1", "2", "3", "4", "5", "6", "7", "8", "9", "1/2", "1/3", "1/4", "1/5", "1/6", "1/7", "1/8", "1/9",
                 "0.5", "0.3", "0.33", "0.25", "0.2", "0.16", "0.17", "0.14", "0.125", "0.12", "0.11", "0.1"};
             int r = e.RowIndex;
             int c = e.ColumnIndex;
@@ -227,10 +230,10 @@ namespace ProAppModule1
                 text_result += "\r\n";
             }
             text_result.Remove(text_result.Length - 4);
-            string table_path = Convert.ToString(textBoxInput.Text);
-            string table_path2 = Convert.ToString(textBoxInput2.Text);
-            //C:\\Users\\Administrator\\Documents\\ArcGIS\\Projects\\MyProject\\MyProject.gdb\\test_calc_from_csv
-            //C:\Users\Administrator\Desktop\BRIC Index data_Charf\BRIC Index data_Charf.shp
+            string table_path = this.ComboBoxInput.Text; // Convert.ToString(ComboBoxInput.Text);
+            string table_path2 = this.ComboBoxInput2.Text;
+            //C:\\Users\\Administrator\\Documents\\ArcGIS\\Projects\\MyProject\\MyProject.gdb\\test_calc_from_csv -- test_calc_from_csv
+            //C:\Users\Administrator\Desktop\BRIC Index data_Charf\BRIC Index data_Charf.shp -- coord_table
             IEnumerable<string> arguments = new List<string> { column_names, table_path, table_path2, text_result };
             var gpResult = Geoprocessing.ExecuteToolAsync(toolboxPath, arguments);
 
@@ -253,8 +256,9 @@ namespace ProAppModule1
             {
                 string text = "";
                 foreach (string row in table.Split(new string[] { "\n" }, StringSplitOptions.None))
-                { 
-                    if (String.IsNullOrEmpty(row)) {
+                {
+                    if (String.IsNullOrEmpty(row))
+                    {
                         continue;
                     }
                     var wordArray = row.Split(' ');
@@ -263,9 +267,10 @@ namespace ProAppModule1
                 }
                 return text;
             }
+
             foreach (IGPMessage gpMessage in ProcessingResult.Messages)
             {
-                //System.Windows.MessageBox.Show(gpMessage.Text);
+                //System.Windows.MessageBox.Show("all_message" + gpMessage.Text);
                 if (gpMessage.Text.Contains("cci"))
                 {
                     Message_ += Prettify(gpMessage.Text);
@@ -283,8 +288,8 @@ namespace ProAppModule1
                 }
 
             }
-           
-            System.Windows.MessageBox.Show(Message_);
+
+            // System.Windows.MessageBox.Show("last message");
 
             /*if (ProcessingResult.IsFailed)
             {
@@ -304,15 +309,46 @@ namespace ProAppModule1
 
         }
 
-        private void textBoxInput_TextChanged(object sender, EventArgs e)
+        private void ComboBoxInput_TextChanged(object sender, EventArgs e)
         {
 
         }
 
-        private void textBoxInput_2_TextChanged(object sender, EventArgs e)
+        private void ComboBoxInput_2_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+        private string[] ComboboxInputRange()
+        {
+            string installPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string toolboxPath = Path.Combine(installPath, "ListTables.pyt\\Tool");
+            var gpResult = Geoprocessing.ExecuteToolAsync(toolboxPath, null);
+
+            IGPResult ProcessingResult1 = gpResult.Result;
+            List<string> TableList = new List<string>();
+            //this.ComboBoxInput.Items.Add("oneTable");
+            //this.ComboBoxInput2.Items.Add("oneTable");
+            foreach (IGPMessage gpMessage in ProcessingResult1.Messages)
+            {
+                if (gpMessage.Text.Trim().Contains("tables_019A37:"))
+                {
+
+                    string TableListStr = gpMessage.Text.Split(':')[1].Trim(' ');
+                    TableListStr = TableListStr.Substring(1, TableListStr.Length -2);
+                    foreach (string oneTable in TableListStr.Split(','))
+                    {
+                        //TableList.Add(oneTable);
+                        this.ComboBoxInput.Items.Add(oneTable.Trim(' ').Substring(1, oneTable.Length - 2).Replace("'", ""));
+                        this.ComboBoxInput2.Items.Add(oneTable.Trim(' ').Substring(1, oneTable.Length - 2).Replace("'", "") );
+                    }
+                }
+            }
+            string[] TableArray = TableList.ToArray();
+            return TableArray;
+
+        }
+
 
     }
 }
