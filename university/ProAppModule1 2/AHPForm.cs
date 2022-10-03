@@ -273,7 +273,7 @@ namespace ProAppModule1
                 //System.Windows.MessageBox.Show("all_message" + gpMessage.Text);
                 if (gpMessage.Text.Contains("cci"))
                 {
-                    Message_ += Prettify(gpMessage.Text);
+                    Message_ += gpMessage.Text //Prettify(gpMessage.Text);
                     System.Windows.MessageBox.Show(Message_);
                 }
                 else if (gpMessage.Text.Trim().StartsWith("x:"))
